@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-wifrgtfcx.dth, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <title>GradeFlow — Smart GPA Calculator</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #0b0f19;
+  --card: #12172a;
+  --muted: #9aa4c7;
+  --text: #eef1ff;
+  --accent: #6c8cff;
+  --accent-2: #44ffd2;
+  --danger: #ff5c7c;
+  --radius: 20px;
+  --blur: blur(20px);
+}
+
+
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+
+body {
+  margin: 0;
+  background: radial-gradient(1200px 600px at 10% -10%, #1a2250, transparent),
+              radial-gradient(1000px 600px at 90% 10%, #14385c, transparent),
+              var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+
+a { text-decoration: none; color: inherit; }
+
+
+/* ================= NAVBAR ================= */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 8vw;
+  backdrop-filter: var(--blur);
+  background: rgba(11,15,25,0.6);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+
+nav .logo {
+  font-weight: 900;
+  font-size: 1.4rem;
+  letter-spacing: 0.5px;
+}
+
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+}
+
+
+.nav-links button {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 4px;
+  position: relative;
+}
+
+
+.nav-links button::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  transition: width 0.3s ease;
+}
+
+
+.nav-links button:hover {
+  color: var(--text);
+}
+
+
+.nav-links button:hover::after {
+  width: 100%;
+}
+
+
+.nav-actions button {
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.nav-actions button:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 15px 40px rgba(108,140,255,0.4);
+}
+
+/* HAMBURGER & MOBILE MENU */
+.hamburger {
+  display: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100vh;
+  background: rgba(11, 15, 25, 0.98);
+  backdrop-filter: blur(20px);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  transition: right 0.3s ease;
+}
+
+.mobile-menu.active {
+  right: 0;
+}
+
+.mobile-menu button {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mobile-menu .close-btn {
+  position: absolute;
+  top: 30px;
+  right: 8vw;
+  font-size: 2rem;
+  color: var(--muted);
+}
+
+/* ================= HERO ================= */
+header {
+  padding: 140px 8vw 120px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+
+header h1 {
+  font-size: clamp(2.8rem, 4vw, 4.2rem);
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+
+header p {
+  color: var(--muted);
+  font-size: 1.1rem;
+  max-width: 520px;
+}
+
+
+header .cta {
+  margin-top: 40px;
+  display: flex;
+  gap: 20px;
+}
+
+
+header .cta button {
+  padding: 16px 30px;
+  border-radius: 14px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #000;
+}
+
+
+.primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 60px rgba(108,140,255,0.45);
+}
+
+
+.secondary {
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+
+.secondary:hover {
+  background: rgba(255,255,255,0.14);
+}
+
+
+header img {
+  width: 100%;
+  border-radius: var(--radius);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+  animation: float 8s ease-in-out infinite;
+}
+
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+
+
+/* ================= SECTIONS ================= */
+section {
+  padding: 120px 8vw;
+}
+
+
+.section-title {
+  font-size: 2.4rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
+.section-sub {
+  color: var(--muted);
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 60px;
+}
+
+
+/* ================= FEATURES ================= */
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+}
+
+
+.feature {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 30px;
+  border-radius: var(--radius);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+
+.feature:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+
+
+.feature h3 {
+  margin-bottom: 10px;
+}
+
+
+.feature p {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+
+.feature {
+transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+
+/* ================= STATS ================= */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  text-align: center;
+}
+
+
+.stat {
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+.stat-label {
+  color: var(--muted);
+}
+
+
+/* ================= REVIEWS ================= */
+.reviews {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+
+.reviews-container {
+    display: flex;
+    gap: 30px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    padding-bottom: 15px;
+}
+
+.reviews-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.reviews-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.reviews-container::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+.reviews-container::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+.review {
+  background: rgba(255,255,255,0.05);
+  padding: 30px;
+  border-radius: var(--radius);
+  transition: transform 0.4s ease;
+  flex: 0 0 300px;
+  min-width: 300px;
+}
+
+
+.review:hover {
+  transform: translateY(-6px);
+}
+
+
+.review p {
+  color: var(--muted);
+}
+.student-name {
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+.stars {
+    color: var(--accent-2);
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+.student-text {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+
+/* ==================== FOOTER ==================== */
+
+.footer {
+padding-block: 2.5rem;
+background: rgba(18, 23, 42, 0.9);
+border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.footer__container {
+max-width: 1120px;
+margin-inline: auto;
+padding-inline: 8vw;
+}
+
+.footer__content {
+display: grid;
+row-gap: 3.5rem;
+}
+
+.footer__logo {
+display: inline-block;
+font-size: 1.4rem;
+font-weight: 800;
+margin-bottom: 1rem;
+}
+
+.footer__description {
+color: var(--muted);
+max-width: 260px;
+line-height: 1.6;
+}
+
+.footer__data {
+display: grid;
+grid-template-columns: repeat(2, max-content);
+gap: 2.5rem 3.5rem;
+}
+
+.footer__title {
+font-size: 1rem;
+margin-bottom: 1rem;
+color: var(--text);
+}
+
+.footer__links,
+.footer__data ul {
+display: grid;
+row-gap: .75rem;
+padding: 0;
+margin: 0;
+list-style: none;
+}
+
+.footer__link {
+color: var(--muted);
+font-size: 0.9rem;
+transition: color .3s;
+}
+
+.footer__link:hover {
+color: var(--text);
+}
+
+/* Bottom group */
+.footer__bottom,
+.footer__group {
+margin-top: 5rem;
+display: flex;
+flex-direction: column;
+align-items: center;
+row-gap: 2rem;
+}
+
+.footer__social {
+display: flex;
+column-gap: 1.5rem;
+}
+
+.footer__social-link {
+font-size: 1.25rem;
+color: var(--muted);
+transition: transform .3s, color .3s;
+}
+
+.footer__social-link:hover {
+color: var(--text);
+transform: translateY(-4px);
+}
+
+.footer__copy {
+font-size: 0.75rem;
+color: var(--muted);
+text-align: center;
+}
+
+/* ==================== RESPONSIVE (travel.az logic) ==================== */
+
+@media screen and (min-width: 768px) {
+.footer__content {
+  grid-template-columns: repeat(2, max-content);
+  justify-content: space-between;
+}
+
+.footer__group,
+.footer__bottom {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.footer__copy {
+  order: -1;
+}
+}
+
+@media screen and (min-width: 1152px) {
+.footer {
+  padding-block: 5rem 3rem;
+}
+
+.footer__data {
+  grid-template-columns: repeat(4, max-content);
+}
+
+.footer__group,
+.footer__bottom {
+  margin-top: 7rem;
+}
+
+.footer__social {
+  column-gap: 2rem;
+}
+
+.footer__social-link {
+  font-size: 1.4rem;
+}
+
+.footer ul {
+list-style: none;
+padding-left: 0;
+margin: 0;
+}
+
+.footer__container {
+max-width: none;
+width: 100%;
+padding-inline: 8vw;
+}
+
+.footer__content {
+grid-template-columns: 1fr auto;
+align-items: flex-start;
+}
+}
+
+/* ================= MEDIA QUERIES FOR MOBILE ================= */
+
+@media (max-width: 768px) {
+  /* Navbar adjustments */
+  nav {
+    padding: 20px 5vw;
+  }
+  
+  .nav-links {
+    display: none; /* Hide desktop links */
+  }
+
+  .nav-actions {
+    display: none; /* Hide desktop CTA */
+  }
+
+  .hamburger {
+    display: block; /* Show hamburger */
+  }
+
+  /* Hero adjustments */
+  header {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 120px 5vw 60px;
+    gap: 40px;
+  }
+
+  header h1 {
+    font-size: 2.8rem;
+  }
+
+  header p {
+    margin: 0 auto;
+  }
+
+  header .cta {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  header img {
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  /* Section adjustments */
+  section {
+    padding: 80px 5vw;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  /* Footer adjustments */
+  .footer__content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  
+  .footer__data {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* ================= SCROLL ANIMATIONS ================= */
+
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Faster staggered cards */
+.reveal-stagger {
+  transition-delay: var(--delay);
+}
+
+/* Hero entrance */
+.hero-left > * {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: heroFade 0.9s ease forwards;
+}
+
+.hero-left > *:nth-child(1) { animation-delay: 0.1s; }
+.hero-left > *:nth-child(2) { animation-delay: 0.25s; }
+.hero-left > *:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes heroFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scroll reveal base */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+  transition-delay: var(--delay, 0s);
+}
+
+/* FAQ open animation */
+.faq-answer {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.45s cubic-bezier(0.77, 0, 0.175, 1),
+    opacity 0.3s ease;
+}
+
+.faq-item {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.faq-question {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    cursor: pointer;
+    text-align: left;
+}
+
+.faq-answer {
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 10px;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 400px;
+  opacity: 1;
+}
+
+.faq-icon {
+  font-size: 1.2rem;
+  transition: transform 0.35s ease;
+}
+
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
+}
+</style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-left">
+      <div class="logo">GradeFlow</div>
+      <div class="nav-links">
+        <button onclick="scrollToSection('home')">Home</button>
+        <button onclick="scrollToSection('features')">About Us</button>
+        <button onclick="scrollToSection('faq')">FAQ</button>
+        <button onclick="scrollToSection('footer')">Contact</button>
+      </div>
+    </div>
+    
+    <!-- Desktop Actions -->
+    <div class="nav-actions">
+      <button onclick="openCalculator()">Open GPA Calculator</button>
+    </div>
+
+    <!-- Mobile Hamburger -->
+    <div class="hamburger" onclick="toggleMobileMenu()">
+      <i class="ri-menu-3-line"></i>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="close-btn" onclick="toggleMobileMenu()"><i class="ri-close-line"></i></button>
+    
+    <button onclick="scrollToSection('home'); toggleMobileMenu()">Home</button>
+    <button onclick="scrollToSection('features'); toggleMobileMenu()">About Us</button>
+    <button onclick="scrollToSection('faq'); toggleMobileMenu()">FAQ</button>
+    <button onclick="scrollToSection('footer'); toggleMobileMenu()">Contact</button>
+    
+    <button style="margin-top: 20px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #000; padding: 12px 24px; border-radius: 99px;" onclick="openCalculator()">Open GPA Calculator</button>
+  </div>
+
+  <header id="home">
+    <div class="hero-left">
+      <h1>Track Grades. Calculate GPA. Stay in Control.</h1>
+      <p>GradeFlow helps you break down every assignment, course, and credit into a crystal-clear GPA — beautifully, accurately, and effortlessly.</p>
+      <div class="cta">
+        <button class="primary" onclick="openCalculator()">Start Calculating</button>
+        <button class="secondary" onclick="scrollToSection('features')">See How It Works</button>
+      </div>
+    </div>
+    <img src="images/Preview.png" alt="App preview" class="reveal">
+  </header>
+
+  <section id="features">
+    <h2 class="section-title">Why Students Love GradeFlow</h2>
+    <p class="section-sub">Designed for clarity, precision, and a premium experience.</p>
+  
+    <div class="features">
+  
+      <div class="reveal reveal-stagger">
+        <div class="feature">
+          <h3>Assignment-Level Accuracy</h3>
+          <p>Enter each assignment with its weight and points for exact results.</p>
+        </div>
+      </div>
+  
+      <div class="reveal reveal-stagger">
+        <div class="feature">
+          <h3>Automatic GPA Conversion</h3>
+          <p>Your grades are instantly converted using a precise GPA scale.</p>
+        </div>
+      </div>
+  
+      <div class="reveal reveal-stagger">
+        <div class="feature">
+          <h3>Credits Supported</h3>
+          <p>Weighted GPA calculation across all your courses.</p>
+        </div>
+      </div>
+  
+      <div class="reveal reveal-stagger">
+        <div class="feature">
+          <h3>Saved Progress</h3>
+          <p>Return anytime — your data is remembered automatically.</p>
+        </div>
+      </div>
+  
+      <div class="reveal reveal-stagger">
+        <div class="feature">
+          <h3>Fully Customizable</h3>
+          <p>Rename subjects, add or remove assignments freely.</p>
+        </div>
+      </div>
+  
+      <div class="reveal reveal-stagger">
+        <div class="feature">
+          <h3>Lightning Fast</h3>
+          <p>No accounts. No clutter. Just results.</p>
+        </div>
+      </div>
+  
+    </div>
+  </section>  
+
+  <section>
+    <h2 class="section-title reveal">Trusted Worldwide</h2>
+  
+    <div class="stats">
+      <div class="reveal">
+        <div class="stat">120K+</div>
+        <div class="stat-label">Active Users</div>
+      </div>
+  
+      <div class="reveal">
+        <div class="stat">1.8M</div>
+        <div class="stat-label">Courses Calculated</div>
+      </div>
+  
+      <div class="reveal">
+        <div class="stat">4.9</div>
+        <div class="stat-label">Average Rating</div>
+      </div>
+  
+      <div class="reveal">
+        <div class="stat">99.9%</div>
+        <div class="stat-label">Accuracy</div>
+      </div>
+    </div>
+  </section>
+  
+
+  <section class="reviews-section">
+    <h2 class="section-title reveal">What Students Say</h2>
+  
+    <div class="reviews-container">
+      <div class="review reveal">
+        <div class="student-name">Alyssa R.</div>
+        <div class="stars">★★★★★</div>
+        <div class="student-text">“This GPA calculator is amazing! Saved me so much time.”</div>
+      </div>
+  
+      <div class="review reveal">
+        <div class="student-name">James K.</div>
+        <div class="stars">★★★★☆</div>
+        <div class="student-text">“I can track my grades perfectly now. Highly recommended.”</div>
+      </div>
+  
+      <div class="review reveal">
+        <div class="student-name">Maria L.</div>
+        <div class="stars">★★★★★</div>
+        <div class="student-text">“The interface is clean and responsive, love it!”</div>
+      </div>
+  
+      <div class="review reveal">
+        <div class="student-name">Daniel S.</div>
+        <div class="stars">★★★★☆</div>
+        <div class="student-text">“Adding courses and assignments is super easy.”</div>
+      </div>
+  
+      <div class="review reveal">
+        <div class="student-name">Sophia M.</div>
+        <div class="stars">★★★★★</div>
+        <div class="student-text">“Helped me calculate my GPA accurately every semester.”</div>
+      </div>
+  
+      <div class="review reveal">
+        <div class="student-name">Raul S.</div>
+        <div class="stars">★☆☆☆☆</div>
+        <div class="student-text">“Good.”</div>
+      </div>
+    </div>
+  </section>
+  
+  
+  <section id="faq" class="faq-section">
+    <h2 class="section-title reveal">Frequently Asked Questions</h2>
+  
+    <div class="faq-container">
+  
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button">
+          What is GPA?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          GPA (Grade Point Average) is a numerical representation of your overall academic performance.
+          It is calculated based on the grades you earn in each course, weighted by credits.
+        </div>
+      </div>
+  
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button">
+          How do I add a new course?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          Click the "+ Add Course" button in your active profile, then name the course, assign credits,
+          and add assignments with grades.
+        </div>
+      </div>
+  
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button">
+          How is my course GPA calculated?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          Assignment points are calculated as (Grade% × Max Points ÷ 100).
+          The total percentage is converted into GPA using standard grade scales.
+        </div>
+      </div>
+  
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button">
+          How is overall GPA calculated?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          Overall GPA = Σ (Course GPA × Course Credits) ÷ Total Credits.
+        </div>
+      </div>
+  
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button">
+          Can I save multiple profiles?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          Yes! You can create multiple profiles, each with its own courses and GPA calculations.
+        </div>
+      </div>
+  
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button">
+          Can I delete a profile or course?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          Yes, click the delete button next to a profile or course to permanently remove it.
+        </div>
+      </div>
+  
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button">
+          Is my data saved automatically?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          All data is stored locally in your browser, so your progress is saved automatically.
+        </div>
+      </div>
+  
+    </div>
+  </section>  
+
+  <script>
+    document.querySelectorAll('.faq-question').forEach(button => {
+      button.addEventListener('click', () => {
+        const item = button.closest('.faq-item');
+        item.classList.toggle('open');
+      });
+    });
+  </script>  
+  
+  <footer id="footer" class="footer">
+    <div class="footer__container container grid">
+      <div class="footer__content grid">
+        
+        <!-- Left side: logo & description -->
+        <div>
+          <a href="#" class="footer__logo">GradeFlow</a>
+          <p class="footer__description">
+            Your Gateway to <br>
+            Academic Success.
+          </p>
+        </div>
+  
+        <!-- Right side: Quick Links + Contact -->
+        <div class="footer__data" style="display:flex; flex-wrap:wrap; gap:40px;">
+  
+          <!-- Quick Links Column -->
+          <div>
+            <h2 class="footer__title">Quick Links</h2>
+            <ul class="footer__links" style="display:flex; flex-direction:column; gap:8px;">
+              <li><a href="#home" class="footer__link" onclick="scrollToSection('home')">Home</a></li>
+              <li><a href="#about" class="footer__link" onclick="scrollToSection('features')">About Us</a></li>
+              <li><a href="#faqs" class="footer__link" onclick="scrollToSection('faq')">FAQ</a></li>
+            </ul>
+          </div>
+  
+          <!-- Contact Column -->
+          <div>
+            <h2 class="footer__title">Contact</h2>
+            <ul class="footer__links" style="display:flex; flex-direction:column; gap:8px;">
+              <li>
+                <a href="tel:+15551234567" class="footer__link" style="display:flex; align-items:center; gap:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;fill:#6c8cff;" viewBox="0 0 24 24">
+                    <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.27c1.21.48 2.53.74 3.88.74a1 1 0 011 1V20a1 1 0 01-1 1C10.07 21 3 13.93 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.35.26 2.67.74 3.88a1 1 0 01-.27 1.11l-2.35 2.35z"/>
+                  </svg>
+                  +1 (555) 123-4567
+                </a>
+              </li>
+              <li>
+                <a href="mailto:info@gradeflow.com" class="footer__link" style="display:flex; align-items:center; gap:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;fill:#6c8cff;" viewBox="0 0 24 24">
+                    <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 18V8l8 5 8-5v10H4z"/>
+                  </svg>
+                  info@gradeflow.com
+                </a>
+              </li>
+              <li>
+                <a href="#" class="footer__link" style="display:flex; align-items:center; gap:8px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;fill:#6c8cff;" viewBox="0 0 24 24">
+                    <path d="M12 2a10 10 0 1010 10A10.011 10.011 0 0012 2zm1 11H11V7h2zm0 4h-2v-2h2z"/>
+                  </svg>
+                  Mon-Fri: 9AM - 6PM
+                </a>
+              </li>
+            </ul>
+          </div>
+  
+        </div>
+  
+      </div>
+    </div>
+  </footer>  
+
+<script>
+  function openCalculator() {
+    window.open('calculator.html', '_blank');
+  }
+
+  function scrollToSection(id) {
+    if (id === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }
+
+  function toggleMobileMenu() {
+    document.getElementById('mobileMenu').classList.toggle('active');
+  }
+
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
+
+  // Observe ALL reveal elements (normal reveal)
+document.querySelectorAll('.reveal').forEach(el => {
+  observer.observe(el);
+});
+
+// Stagger ONLY feature cards (clean & predictable)
+document
+  .querySelectorAll('.features .reveal-stagger')
+  .forEach((el, i) => {
+    el.style.setProperty('--delay', `${i * 0.08}s`);
+  });
+
+
+  const faqItems = document.querySelectorAll('.faq-item');
+
+const faqObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      faqItems.forEach((item, i) => {
+        setTimeout(() => {
+          item.classList.add('reveal-active');
+        }, i * 70);
+      });
+      faqObserver.disconnect();
+    }
+  });
+}, { threshold: 0.2 });
+
+faqObserver.observe(document.querySelector('.faq-container'));
+
+</script>
+
+</body>
+</html>

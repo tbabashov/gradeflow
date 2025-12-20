@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPA Calculator</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+    :root {
+      --bg: #0b0f19;
+      --card: #12172a;
+      --card-light: rgba(255,255,255,0.05);
+      --muted: #9aa4c7;
+      --text: #eef1ff;
+      --accent: #6c8cff;
+      --accent2: #44ffd2;
+      --danger: #ff5c7c;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: 0.25s ease;
+    }
+    
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    
+    body {
+      background: 
+        radial-gradient(1200px 600px at 10% -10%, #1a2250, transparent),
+        radial-gradient(1000px 600px at 90% 10%, #14385c, transparent),
+        var(--bg);
+      background-attachment: fixed;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 5vw;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
+      letter-spacing: -0.5px;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #000;
+      transition: var(--transition);
+      white-space: nowrap;
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(108, 140, 255, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    main {
+      flex: 1;
+      padding: 40px 5vw;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      padding-bottom: 120px;
+    }
+    
+    .profiles-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .profiles-section h2 {
+      margin: 0;
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    
+    .profiles-container {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .profile {
+      padding: 10px 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .profile:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+    
+    .profile.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #000;
+      font-weight: 600;
+    }
+    
+    .profile-delete {
+      margin-left: 4px;
+      opacity: 0.6;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.2rem;
+      transition: var(--transition);
+    }
+    
+    .profile:hover .profile-delete {
+      opacity: 1;
+    }
+    
+    .nav-home {
+      background: none;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 12px;
+      position: relative;
+      transition: var(--transition);
+    }
+    
+    .nav-home::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      transition: width 0.3s ease;
+    }
+    
+    .nav-home:hover {
+      color: var(--text);
+    }
+    
+    .nav-home:hover::after {
+      width: 100%;
+    }
+    
+    /* ===== COURSE CARD ===== */
+    .courses-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    
+    .course {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .course::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    
+    .course:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      border-color: rgba(108, 140, 255, 0.2);
+    }
+    
+    .course:hover::before {
+      opacity: 1;
+    }
+    
+    .course-header {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    @media (min-width: 640px) {
+      .course-header {
+        grid-template-columns: 1fr 120px auto auto;
+        align-items: center;
+      }
+    }
+    
+    /* Subject name input */
+    .course-header input:first-child {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      padding: 14px 16px;
+      background: linear-gradient(
+        135deg,
+        rgba(108, 140, 255, 0.15),
+        rgba(68, 255, 210, 0.15)
+      );
+      border: 1px solid rgba(108, 140, 255, 0.3);
+      grid-column: 1;
+    }
+    
+    input {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: rgba(108, 140, 255, 0.5);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(108, 140, 255, 0.1);
+    }
+    
+    input::placeholder {
+      color: var(--muted);
+    }
+    
+    .course-header input:not(:first-child) {
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+    
+    .course-buttons {
+      display: flex;
+      gap: 10px;
+      grid-column: 1;
+      flex-wrap: wrap;
+    }
+    
+    @media (min-width: 640px) {
+      .course-buttons {
+        grid-column: 3 / span 2;
+        flex-wrap: nowrap;
+      }
+    }
+    
+    .btn-small {
+      padding: 8px 14px !important;
+      font-size: 0.85rem !important;
+      min-height: 36px !important;
+    }
+    
+    .delete {
+      background: none !important;
+      color: var(--danger);
+      font-weight: 900;
+      cursor: pointer;
+      padding: 8px 10px !important;
+      min-height: 36px !important;
+      transition: var(--transition);
+    }
+    
+    .delete:hover {
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(255, 92, 124, 0.3) !important;
+    }
+    
+    .assignments {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .assignment {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: var(--transition);
+    }
+    
+    .assignment:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+    
+    @media (min-width: 640px) {
+      .assignment {
+        grid-template-columns: 2fr 1fr 1fr auto;
+        align-items: center;
+      }
+    }
+    
+    .assignment input {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .course-footer {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    
+    .course-footer .gpa-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    
+    .course-footer .gpa-value {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+    
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+      color: var(--muted);
+      gap: 24px;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .empty-state-icon {
+      font-size: 3.5rem;
+      opacity: 0.5;
+    }
+    
+    .empty-state-message {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+    
+    .empty-state button {
+      padding: 12px 28px !important;
+      font-size: 0.95rem !important;
+      margin-top: 8px;
+    }
+    
+    /* ===== ADD COURSE BUTTON ===== */
+    .add-course-btn {
+      align-self: flex-start;
+      padding: 12px 24px !important;
+      margin-top: 20px;
+    }
+    
+    /* ===== GPA SUMMARY BAR ===== */
+    .summary {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 16px 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      background: rgba(18, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+      z-index: 50;
+    }
+    
+    .summary-label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .gpa {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .summary-content {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    
+    @media (max-width: 480px) {
+      .summary {
+        padding: 12px 5vw;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .summary-label {
+        font-size: 0.85rem;
+      }
+      
+      .gpa {
+        font-size: 1.8rem;
+      }
+    }
+    
+    /* ===== RESPONSIVE UTILITIES ===== */
+    @media (max-width: 768px) {
+      header {
+        padding: 16px 5vw;
+      }
+      
+      main {
+        padding: 32px 5vw;
+        gap: 32px;
+        padding-bottom: 140px;
+      }
+      
+      .course {
+        padding: 20px;
+      }
+      
+      .course-header {
+        gap: 12px;
+      }
+      
+      button {
+        font-size: 0.9rem;
+        padding: 9px 16px;
+        min-height: 38px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.3rem;
+      }
+      
+      .profiles-section h2 {
+        font-size: 1.1rem;
+      }
+      
+      .course {
+        padding: 16px;
+      }
+      
+      .course-header input:first-child {
+        font-size: 1.1rem;
+      }
+      
+      .profiles-container {
+        gap: 8px;
+      }
+      
+      .profile {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+      }
+      
+      main {
+        padding-bottom: 130px;
+      }
+    }
+    
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(108, 140, 255, 0.5);
+      border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(108, 140, 255, 0.7);
+    }
+
+    @keyframes info-pulse {
+      0% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.6; }
+    }
+
+    .info-icon-hover {
+      animation: info-pulse 0.6s ease-in-out !important;
+    }
+
+    .course.dragging { opacity: 0.5; }
+    .course.drag-over { border: 2px dashed rgba(108, 140, 255, 0.6); }
+    .assignment.dragging { opacity: 0.5; }
+    .assignment.drag-over { border: 2px dashed rgba(108, 140, 255, 0.6); }
+
+    .drag-handle {
+      cursor: grab;
+      padding: 0 12px;
+      color: var(--muted);
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .drag-handle:active { cursor: grabbing; }
+
+    @media (min-width: 640px) {
+      .assignment {
+        grid-template-columns: auto 2fr 1fr 1fr auto;
+      }
+    }
+</style>
+</head>
+<body>
+  <header>
+    <h1>GPA Calculator</h1>
+    <div class="header-actions">
+      <button class="nav-home" id="returnHome">← Home</button>
+      <button id="newProfile">+ New Profile</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="profiles-section">
+      <h2>Profiles</h2>
+      <div id="profiles" class="profiles-container"></div>
+    </div>
+    <div id="courses" class="courses-list"></div>
+    <button id="addCourse" class="add-course-btn">+ Add Course</button>
+  </main>
+
+  <div class="summary">
+    <div class="summary-label">Overall GPA</div>
+    <div class="summary-content">
+      <div class="gpa" id="overallGPA">0.00</div>
+    </div>
+  </div>
+
+  <script>
+let state = JSON.parse(localStorage.getItem('gradeflow_state')) || { profiles: [], active: null };
+let draggedCourseIdx = null;
+let draggedAssignmentIdx = null;
+let touchStart = null;
+
+function save() {
+  localStorage.setItem('gradeflow_state', JSON.stringify(state));
+}
+
+function toGPA(p) {
+  if (p >= 94) return 4;
+  if (p >= 90) return 3.67;
+  if (p >= 87) return 3.33;
+  if (p >= 83) return 3;
+  if (p >= 80) return 2.67;
+  if (p >= 77) return 2.33;
+  if (p >= 73) return 2;
+  if (p >= 70) return 1.67;
+  if (p >= 67) return 1.33;
+  if (p >= 60) return 1;
+  return 0;
+}
+
+const profilesContainer = document.getElementById('profiles');
+const coursesContainer = document.getElementById('courses');
+const addCourseBtn = document.getElementById('addCourse');
+const overallGPAEl = document.getElementById('overallGPA');
+
+document.getElementById('returnHome').onclick = () => {
+  window.location.href = 'index.html';
+};
+
+document.getElementById('newProfile').onclick = () => {
+  const name = prompt('Profile name');
+  if (!name) return;
+  state.profiles.push({ name, courses: [] });
+  state.active = state.profiles.length - 1;
+  save();
+  render();
+};
+
+addCourseBtn.onclick = () => {
+  if (state.active === null) {
+    alert('Create a profile first');
+    return;
+  }
+  state.profiles[state.active].courses.push({ name: 'Subject Name', credits: 6, assignments: [] });
+  save();
+  render();
+};
+
+function render() {
+  profilesContainer.innerHTML = '';
+  coursesContainer.innerHTML = '';
+
+  // No profiles yet
+  if (state.profiles.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    const icon = document.createElement('div');
+    icon.className = 'empty-state-icon';
+    icon.textContent = '📚';
+    const msg = document.createElement('div');
+    msg.className = 'empty-state-message';
+    msg.textContent = 'Start by creating a profile';
+    const btn = document.createElement('button');
+    btn.textContent = '+ New Profile';
+    btn.onclick = () => {
+      document.getElementById('newProfile').click();
+    };
+    empty.append(icon, msg, btn);
+    coursesContainer.appendChild(empty);
+
+    addCourseBtn.style.display = 'none';
+    overallGPAEl.textContent = '0.00';
+    return;
+  }
+
+  // Render profiles
+  state.profiles.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'profile' + (i === state.active ? ' active' : '');
+    el.style.cursor = 'pointer';
+
+    const label = document.createElement('span');
+    label.textContent = p.name;
+
+    const del = document.createElement('span');
+    del.className = 'profile-delete';
+    del.textContent = '×';
+    del.onclick = (e) => {
+      e.stopPropagation();
+      if (!confirm('Delete this profile?')) return;
+      state.profiles.splice(i, 1);
+      if (state.active === i) state.active = null;
+      if (state.active > i) state.active--;
+      save();
+      render();
+    };
+
+    el.append(label, del);
+
+    el.onclick = () => {
+      state.active = i;
+      save();
+      render();
+    };
+
+    profilesContainer.appendChild(el);
+  });
+
+  // No active profile
+  if (state.active === null) {
+    overallGPAEl.textContent = '0.00';
+    addCourseBtn.style.display = 'none';
+    return;
+  }
+
+  const profile = state.profiles[state.active];
+
+  // No courses yet
+  if (profile.courses.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    const icon = document.createElement('div');
+    icon.className = 'empty-state-icon';
+    icon.textContent = '📝';
+    const msg = document.createElement('div');
+    msg.className = 'empty-state-message';
+    msg.textContent = 'Start by adding a course';
+    const btn = document.createElement('button');
+    btn.textContent = '+ Add Course';
+    btn.onclick = () => {
+      addCourseBtn.click();
+    };
+    empty.append(icon, msg, btn);
+    coursesContainer.appendChild(empty);
+
+    addCourseBtn.style.display = 'none';
+    overallGPAEl.textContent = '0.00';
+    return;
+  }
+
+  // Render courses
+  coursesContainer.innerHTML = '';
+  profile.courses.forEach((course, ci) => {
+    const box = document.createElement('div');
+    box.className = 'course';
+    box.draggable = true;
+
+    const head = document.createElement('div');
+    head.className = 'course-header';
+
+    const nameInput = document.createElement('input');
+    nameInput.placeholder = 'Subject name';
+    nameInput.value = course.name;
+    nameInput.addEventListener('input', () => {
+      course.name = nameInput.value || 'Subject Name';
+      save();
+    });
+
+    const creditInput = document.createElement('input');
+    creditInput.type = 'number';
+    creditInput.placeholder = 'Credits';
+    creditInput.value = course.credits;
+    creditInput.min = '1';
+    creditInput.max = '12';
+    creditInput.addEventListener('input', () => {
+      course.credits = +creditInput.value || 3;
+      save();
+      updateCourseGPA(course);
+    });
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'course-buttons';
+
+    const addA = document.createElement('button');
+    addA.className = 'btn-small';
+    addA.textContent = '+ Assignment';
+    addA.addEventListener('click', () => {
+      course.assignments.push({ name: '', max: null, got: 0 });
+      save();
+      render();
+    });
+
+    const delC = document.createElement('button');
+    delC.className = 'delete btn-small';
+    delC.textContent = '×';
+    delC.addEventListener('click', () => {
+      if (confirm('Delete this course?')) {
+        profile.courses.splice(ci, 1);
+        save();
+        render();
+      }
+    });
+
+    buttonContainer.append(addA, delC);
+    head.append(nameInput, creditInput, buttonContainer);
+    box.appendChild(head);
+
+    // Drag handlers for course
+    box.ondragstart = (e) => {
+      draggedCourseIdx = ci;
+      box.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    };
+    box.ondragend = () => {
+      box.classList.remove('dragging');
+      document.querySelectorAll('.course').forEach(c => c.classList.remove('drag-over'));
+    };
+    box.ondragover = (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (draggedCourseIdx !== null && draggedCourseIdx !== ci) {
+        box.classList.add('drag-over');
+      }
+    };
+    box.ondragleave = () => {
+      box.classList.remove('drag-over');
+    };
+    box.ondrop = (e) => {
+      e.preventDefault();
+      box.classList.remove('drag-over');
+      if (draggedCourseIdx !== null && draggedCourseIdx !== ci) {
+        const temp = profile.courses[draggedCourseIdx];
+        profile.courses[draggedCourseIdx] = profile.courses[ci];
+        profile.courses[ci] = temp;
+        save();
+        draggedCourseIdx = null;
+        render();
+      }
+    };
+
+    const list = document.createElement('div');
+    list.className = 'assignments';
+
+    course.assignments.forEach((a, ai) => {
+      const row = document.createElement('div');
+      row.className = 'assignment';
+      row.draggable = true;
+
+      const dragHandle = document.createElement('div');
+      dragHandle.className = 'drag-handle';
+      dragHandle.textContent = '⋮⋮';
+      dragHandle.title = 'Drag to rearrange';
+
+      const an = document.createElement('input');
+      an.placeholder = 'Assignment name (e.g., Mid-Term exam)';
+      an.value = a.name;
+      an.addEventListener('input', () => {
+        a.name = an.value;
+        save();
+      });
+
+      const gt = document.createElement('input');
+      gt.type = 'number';
+      gt.placeholder = 'Grade (%)';
+      gt.value = a.got || '';
+      gt.min = '0';
+      gt.max = '100';
+      gt.addEventListener('input', () => {
+        a.got = +gt.value || 0;
+        save();
+        updateCourseGPA(course);
+      });
+
+      const mxWrapper = document.createElement('div');
+      mxWrapper.style.position = 'relative';
+      mxWrapper.style.display = 'flex';
+      mxWrapper.style.alignItems = 'center';
+
+      const mx = document.createElement('input');
+      mx.type = 'number';
+      mx.placeholder = 'Max points';
+      mx.value = a.max || '';
+      mx.min = '1';
+      mx.style.width = '100%';
+      mx.style.paddingRight = '24px';
+      mx.addEventListener('input', () => {
+        a.max = mx.value === '' ? 0 : +mx.value;
+        save();
+        updateCourseGPA(course);
+      });
+
+      const infoIcon = document.createElement('div');
+      infoIcon.textContent = 'i';
+      infoIcon.title = 'percentage of overall course grade';
+      infoIcon.style.position = 'absolute';
+      infoIcon.style.right = '8px';
+      infoIcon.style.width = '14px';
+      infoIcon.style.height = '14px';
+      infoIcon.style.borderRadius = '50%';
+      infoIcon.style.border = '1px solid currentColor';
+      infoIcon.style.fontSize = '10px';
+      infoIcon.style.display = 'flex';
+      infoIcon.style.alignItems = 'center';
+      infoIcon.style.justifyContent = 'center';
+      infoIcon.style.cursor = 'help';
+      infoIcon.style.opacity = '0.6';
+      infoIcon.style.pointerEvents = 'auto';
+      infoIcon.style.transition = 'opacity 0.25s ease';
+      infoIcon.onmouseenter = () => {
+        infoIcon.classList.add('info-icon-hover');
+        infoIcon.style.opacity = '1';
+      };
+      infoIcon.onmouseleave = () => {
+        infoIcon.classList.remove('info-icon-hover');
+        infoIcon.style.opacity = '0.6';
+      };
+      infoIcon.onclick = (e) => {
+        e.stopPropagation();
+        alert('This represents the percentage of the overall course grade');
+      };
+
+      mxWrapper.append(mx, infoIcon);
+
+      const delA = document.createElement('button');
+      delA.className = 'delete btn-small';
+      delA.textContent = '×';
+      delA.addEventListener('click', () => {
+        course.assignments.splice(ai, 1);
+        save();
+        updateCourseGPA(course);
+        render();
+      });
+
+      row.append(dragHandle, an, gt, mxWrapper, delA);
+
+      // Drag handlers for assignment
+      row.ondragstart = (e) => {
+        draggedAssignmentIdx = ai;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      };
+      row.ondragend = () => {
+        row.classList.remove('dragging');
+        document.querySelectorAll('.assignment').forEach(a => a.classList.remove('drag-over'));
+      };
+      row.ondragover = (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (draggedAssignmentIdx !== null && draggedAssignmentIdx !== ai) {
+          row.classList.add('drag-over');
+        }
+      };
+      row.ondragleave = () => {
+        row.classList.remove('drag-over');
+      };
+      row.ondrop = (e) => {
+        e.preventDefault();
+        row.classList.remove('drag-over');
+        if (draggedAssignmentIdx !== null && draggedAssignmentIdx !== ai) {
+          const temp = course.assignments[draggedAssignmentIdx];
+          course.assignments[draggedAssignmentIdx] = course.assignments[ai];
+          course.assignments[ai] = temp;
+          save();
+          draggedAssignmentIdx = null;
+          render();
+        }
+      };
+
+      list.appendChild(row);
+    });
+
+    box.appendChild(list);
+
+    const footer = document.createElement('div');
+    footer.className = 'course-footer';
+    box.appendChild(footer);
+    course.footerEl = footer;
+
+    coursesContainer.appendChild(box);
+    updateCourseGPA(course);
+  });
+
+  addCourseBtn.style.display = profile.courses.length > 0 ? 'inline-flex' : 'none';
+}
+
+function updateCourseGPA(course) {
+  let pointsAcquired = course.assignments.reduce((sum, a) => sum + ((a.got || 0) * (a.max || 0) / 100), 0);
+  let maxPoints = course.assignments.reduce((sum, a) => sum + (a.max || 0), 0);
+  course.percentage = maxPoints ? (pointsAcquired / maxPoints) * 100 : 0;
+  course.courseGPA = toGPA(course.percentage);
+  course.GC = course.courseGPA * course.credits;
+
+  if (course.footerEl) {
+    course.footerEl.innerHTML = `
+      <div class="gpa-line">
+        <span>Course GPA:</span>
+        <span class="gpa-value">${course.courseGPA.toFixed(2)}</span>
+      </div>
+      <div class="gpa-line">
+        <span>Percentage:</span>
+        <span class="gpa-value">${course.percentage.toFixed(1)}%</span>
+      </div>
+    `;
+  }
+
+  updateOverallGPA();
+}
+
+function updateOverallGPA() {
+  if (state.active === null) {
+    overallGPAEl.textContent = '0.00';
+    return;
+  }
+  const profile = state.profiles[state.active];
+  let totalGC = 0;
+  let totalCredits = 0;
+  profile.courses.forEach(c => {
+    totalGC += c.GC || 0;
+    totalCredits += c.credits;
+  });
+  overallGPAEl.textContent = totalCredits ? (totalGC / totalCredits).toFixed(2) : '0.00';
+}
+
+render();
+  </script>
+</body>
+</html>
